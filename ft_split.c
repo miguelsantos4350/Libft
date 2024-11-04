@@ -12,6 +12,8 @@
 
 #include "libft.h"
 
+#include "libft.h"
+
 static int	ft_count_words(const char *s, char c)
 {
 	int	i;
@@ -26,7 +28,7 @@ static int	ft_count_words(const char *s, char c)
 			words++;
 			while (s[i] && s[i] != c)
 				i++;
-		}
+		}	
 		else
 			i++;
 	}
