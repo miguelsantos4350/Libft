@@ -12,101 +12,76 @@
 
 #include "libft.h"
 
-static int	word_count(const char *str, char c)
+static int	ft_count_words(const char *s, char c)
 {
-	int	count;
-	int	flag;
 	int	i;
+	int	words;
 
-	count = 0;
-	flag = 0;
 	i = 0;
-	while (str[i]) 
+	words = 0;
+	while (s[i])
 	{
-		if (str[i] != c && flag == 0)
+		if (s[i] != c)
 		{
-			flag = 1;
-			count++;
+			words++;
+			while (s[i] && s[i] != c)
+				i++;
 		}
-		else if (str[i] == c)
-			flag = 0;
-		i++;
+		else
+			i++;
 	}
-	return (count);
+	return (words);
 }
 
-static void	*ft_free(char **strs, int count)
-{
-	int	i;
-
-	i = 0;
-	while (i < count)
-	{
-		free(strs[i]);
-		i++;
-	}
-	free(strs);
-	return (NULL);
-}
-
-static char	*fill_word(const char *str, int start, int end)
+static char	*word_splitter(const char *s, char c)
 {
 	char	*word;
 	int		i;
 
 	i = 0;
-	word = ft_calloc((end - start + 1), sizeof(char));
+	while (s[i] && s[i] != c)
+		i++;
+	word = (char *) malloc(sizeof(char) * (i + 1));
 	if (!word)
 		return (NULL);
-	while (start < end)
+	i = 0;
+	while (s[i] && s[i] != c)
 	{
-		word[i] = str[start];
+		word[i] = s[i];
 		i++;
-		start++;
 	}
 	word[i] = '\0';
 	return (word);
 }
 
-static char	**split_words(char **result, const char *s, char c)
+char	**ft_split(char const *s, char c)
 {
-	size_t	i;
-	size_t	j;
-	int		start;
+	int		i;
+	int		j;
+	char	**words;
 
 	i = 0;
 	j = 0;
-	start = -1;
-	while (i <= ft_strlen(s))
+	words = (char **) malloc(sizeof(char *) * (ft_count_words(s, c) + 1));
+	if (!words || !s)
+		return (NULL);
+	while (s[i])
 	{
-		if (s[i] != c && start < 0)
-			start = i;
-		else if ((s[i] == c || i == ft_strlen(s)) && start >= 0)
+		if (s[i] != c)
 		{
-			result[j] = fill_word(s, start, i);
-			if (!(result[j]))
-				return (ft_free(result, j));
-			start = -1;
+			words[j] = word_splitter(&s[i], c);
+			while (s[i] && s[i] != c)
+				i++;
 			j++;
 		}
-		i++;
+		else
+			i++;
 	}
-	return (result);
+	words[j] = 0;
+	return (words);
 }
 
-char	**ft_split(const char *s, char c)
-{
-	char	**result;
-
-	if (!s || !c)
-		return (NULL);
-	result = ft_calloc((word_count(s, c) + 1), sizeof(char *));
-	if (!result)
-		return (NULL);
-	result = split_words(result, s, c);
-	return (result);
-}
-
+/*
 int	main(void)
 {
     char *ptr = "Miguel Goncalves dos Santos";
@@ -118,4 +93,4 @@ int	main(void)
         printf("%s\n", array[i]);
     }
     return (0);
-}
+}*/
